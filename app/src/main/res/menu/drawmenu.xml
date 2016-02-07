@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <group android:checkableBehavior="single" android:id="@+id/groups">
+
+        <item android:title="Home"
+            android:id="@+id/home"
+            android:icon="@drawable/home"
+            >
+
+        </item>
+
+<item
+
+   android:title="Manual-Entry"
+    android:id="@+id/manual"
+    android:icon="@drawable/manual"></item>
+
+    </group>
+
+    <group android:checkableBehavior="single" android:id="@+id/reportopts">
+<item android:title="Report" >
+    <menu>
+
+        <item android:title="Day" android:id="@+id/day" android:icon="@drawable/day"/>
+        <item android:title="Month" android:id="@+id/month" android:icon="@drawable/month"/>
+
+    </menu>
+
+
+</item>
+        <item android:icon="@drawable/logout" android:title="Logout" android:id="@+id/logout"></item>
+
+    </group>
+</menu>

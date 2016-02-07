@@ -1,0 +1,132 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.mohit.time.userHome"
+    android:id="@+id/drawlay">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+   <include layout="@layout/app_bar"
+       android:id="@+id/app_bar_home"
+
+    />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/home_entry_button"
+                android:textColor="#FFFFFF"
+                android:id="@+id/entry"
+                android:background="@drawable/custom_button"
+
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true" />
+
+
+
+
+        <TextView
+            android:layout_marginTop="50dp"
+            android:layout_width="match_parent"
+
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/Entry"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@id/Entry"
+            android:id="@+id/Break1"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/Break2"
+            android:layout_below="@+id/Break1"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_below="@id/Break2"
+            android:id="@+id/Break3"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/ExitTime"
+            android:layout_below="@+id/Break1"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="59dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/break_text_home"
+            android:textColor="@color/primary"
+            android:id="@+id/textView4"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_marginTop="60dp"
+            android:layout_below="@id/entry"
+            android:layout_alignParentStart="true" />
+
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary"
+                android:background="@drawable/custom_button"
+                android:text="@string/break_button"
+                android:id="@+id/breakStart"
+                android:layout_above="@+id/Entry"
+                android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>
+
+
+
+
+
+
+    <android.support.design.widget.NavigationView
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:id="@+id/draw"
+        app:menu="@menu/drawmenu"
+        app:headerLayout="@layout/header">
+
+
+    </android.support.design.widget.NavigationView>
+
+
+
+
+</android.support.v4.widget.DrawerLayout>

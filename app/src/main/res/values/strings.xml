@@ -1,0 +1,37 @@
+<resources>
+    <string name="app_name">Time</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_user_home">Home</string>
+    <string name="Entrytime">Entrytime</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="title_activity_day_report">Day-Report</string>
+    <string name="title_activity_manual_entry">Manual-Entry</string>
+    <string name="title_activity_signup">signup</string>
+    <string name="title_activity_month_report">MonthReport</string>
+    <string name="password" >Enter Username</string>
+    <string name="username" >Enter Password</string>
+    <string name="break1_hint">Enter Break 1 Duration(in min)</string>
+    <string name="entry_time_hint">Enter Entry Time</string>
+    <string name="break2_hint">Enter Break 2 Duration(in min)</string>
+    <string name="break3_hint">Enter Break 3 Duration(in min)</string>
+    <string name="exit_hint">Enter exit Time</string>
+    <string name="button_edit">EDIT</string>
+    <string name="month_report_button">OK</string>
+    <string name="home_entry_button">ENTRY</string>
+    <string name="home_break_button">Start</string>
+    <string name="break_text_home">BREAKS</string>
+    <string name="break1_start">Break1 Start</string>
+    <string name="break1_stop">Break1 Stop</string>
+    <string name="break2_start">Break2 Start</string>
+    <string name="break2_stop">Break2 Stop</string>
+    <string name="break3_start">Break3 Start</string>
+    <string name="break3_stop">Break3 Stop</string>
+    <string name="break_button">BREAK START</string>
+    <string name="day_report_id">Enter ID</string>
+    <string name="day_report_button">Go!</string>
+    <string name="manual_today">Cannot Update Today\'s Details</string>
+    <string name="title_activity_user_name_list">UserNameList</string>
+</resources>
