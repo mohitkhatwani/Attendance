@@ -1,5 +1,7 @@
 package com.example.mohit.time;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,28 +12,37 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
-public class MonthReport extends ActionBarActivity {
+public class MonthReport extends ActionBarActivity implements AdapterView.OnItemSelectedListener{
 
     private Calendar mCalendar;
 
     int mYear,mMonth,mDay,yearSelected,monthSelected;
+    static final int DATE_DIALOG_ID = 1;
 
     int time_hrs,time_min;
 
@@ -45,11 +56,11 @@ public class MonthReport extends ActionBarActivity {
     ActionBarDrawerToggle abdt;
     NavigationView nv1;
     Toolbar tb1;
-    EditText month_id;
 
+    Spinner spinner;
+    List<String> unames;
 
-
-    int id,id_text;
+    int id,desig,id_sel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +80,22 @@ public class MonthReport extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_month_report);
 
-        month_id = (EditText) findViewById(R.id.month_report_id);
+        final SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+        id = sharedpreferences.getInt("id", 0);
+//
+        desig = dbHelper.getDesignation(id);
+        Log.e("desig", String.valueOf(desig));
 
-        dp1=(DatePicker)findViewById(R.id.datePicker2);
+
+        unames = new ArrayList<>();
+        spinner = (Spinner) findViewById(R.id.spinner_month);
+        spinner.setOnItemSelectedListener(MonthReport.this);
+
+        unames = dbHelper.getUserNameFromDesig(desig);
+
+        MyAdapter aa = new MyAdapter(unames);
+        spinner.setAdapter(aa);
+
         b = (Button) findViewById(R.id.month_button);
 
         textView = (TextView) findViewById(R.id.tool_time);
@@ -86,34 +110,16 @@ public class MonthReport extends ActionBarActivity {
 
 
 
-
-b.setOnClickListener(new View.OnClickListener() {
+        b.setOnClickListener(new View.OnClickListener() {
     @Override
-    public void onClick(View v) {
+             public void onClick(View v) {
 
-        final SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-        id = sharedpreferences.getInt("id",0);
 
         yearSelected = dp1.getYear();
         monthSelected = dp1.getMonth()+1;
 
         int show=1;
-        String temp = month_id.getText().toString();
-        if(!temp.equals("")) {
-            id_text = Integer.parseInt(temp);
-        }
 
-        if(id_text!=0) {
-
-            if (dbHelper.getDesignation(id) > dbHelper.getDesignation(id_text)) {
-                id = id_text;
-            }
-            else {
-                Toast.makeText(getApplicationContext(),"Not Authorized",Toast.LENGTH_SHORT).show();
-                show=0;
-                month_id.setText(null);
-            }
-        }
         Log.e("month selected", String.valueOf(monthSelected));
         int working_time = dbHelper.monthReport(id, String.valueOf(monthSelected));
         int break_time = dbHelper.getMonthBreak(id, String.valueOf(monthSelected));
@@ -143,15 +149,12 @@ b.setOnClickListener(new View.OnClickListener() {
                     })
                     .show();
         }
-//
-//                    }
-//                }, mYear, mMonth, mDay);
-//        dpd.show();
+
     }
 });
 
 
-       //((ViewGroup) dpd.getDatePicker()).findViewById(Resources.getSystem().getIdentifier("day","id","android")).setVisibility(View.GONE);
+
 
 
         drawerLayout=(DrawerLayout)findViewById(R.id.drawlay_month);          /*Drawer*/
@@ -166,9 +169,6 @@ b.setOnClickListener(new View.OnClickListener() {
             }
         });
 
-//        user_drawer = (TextView) findViewById(R.id.user_drawer);
-        String username = dbHelper.getUserDrawer(id);
-        user_drawer.setText(username);
 
         nv1.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -222,6 +222,8 @@ b.setOnClickListener(new View.OnClickListener() {
 
     }
 
+
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -232,4 +234,48 @@ b.setOnClickListener(new View.OnClickListener() {
     }
 
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String uname_sel = unames.get(position);
+        int idl = dbHelper.getIdFromUname(uname_sel);
+        id_sel = idl;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    private class MyAdapter extends BaseAdapter {
+        private List<String> uname;
+        public MyAdapter(List<String> unames) {
+            this.uname = unames;
+        }
+
+        @Override
+        public int getCount() {
+            return uname.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView user_name;
+            LayoutInflater inflater = (LayoutInflater) getApplicationContext()
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View v = inflater.inflate(R.layout.list_uname, parent, false);
+            user_name = (TextView) v.findViewById(R.id.user_name);
+            user_name.setText(uname.get(position));
+            return v;
+        }
+    }
 }

@@ -36,7 +36,7 @@ import java.util.zip.Inflater;
 
 
 public class DayReport extends AppCompatActivity  implements AdapterView.OnItemSelectedListener {
-TextView textView,user_drawer;
+TextView textView;
     DatePicker dp1;
 
     int id,desig,id_text;
@@ -92,13 +92,6 @@ TextView textView,user_drawer;
         }
 
 
-//        Log.e("unames",get_unames[1]);
-//        Log.e("asd", String.valueOf(desig));
-//        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,unames);
-//               aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//               Setting the ArrayAdapter data on the Spinner
-//               spinner.setAdapter(aa);
-
         MyAdapter aa = new MyAdapter(unames);
         spinner.setAdapter(aa);
 
@@ -137,29 +130,13 @@ TextView textView,user_drawer;
                     date_selected = year + "-"+month+"-"+day;
                 }
                 int show=1;
-               // String temp_id = day_id.getText().toString();
 
-//                if(!temp_id.equals("")) {
-//                    Log.e("temp id editext","is not empty");
-//                    id_text = Integer.parseInt(temp_id);
-//                }
-
-//                if(id_text!=id) {
-//
-//                    if (desig > dbHelper.getDesignation(id_text)) {
-//                        id = id_text;
-//                    } else {
-//                        Toast.makeText(getApplicationContext(),"Not Authorized",Toast.LENGTH_SHORT).show();
-//                        show=0;
-//
-//                    }
-//                }
                 Log.e("id while Day report", String.valueOf(id));
                 Log.e("check date",date_selected);
 
                 try {
-                    working =  dbHelper.getDayReportWorking(id, date_selected);
-                    break_time = dbHelper.getDayReportBreak(id, date_selected);
+                    working =  dbHelper.getDayReportWorking(id_text, date_selected);
+                    break_time = dbHelper.getDayReportBreak(id_text, date_selected);
                 }catch (NumberFormatException e) {
                     show =0;
                     dialogBuilder
@@ -305,7 +282,7 @@ TextView textView,user_drawer;
 
         String uname_sel = unames.get(position);
         int idl = dbHelper.getIdFromUname(uname_sel);
-      // id_text = idl;
+       id_text = idl;
     }
 
     @Override

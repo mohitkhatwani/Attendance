@@ -284,18 +284,18 @@ public class manualEntry extends AppCompatActivity {
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
 
-                            break2_hrs_stop = hourOfDay;
+                        break2_hrs_stop = hourOfDay;
 
-                            break2_min_stop = minute;
+                        break2_min_stop = minute;
 
                         if (break2_hrs_stop < 10 && break2_min_stop > 9) {
                             break2_stop1.setText("0" + break2_hrs_stop + ":" + break2_min_stop);
-                        } else if(break2_hrs_stop >9 && break2_min_stop < 10){
+                        } else if (break2_hrs_stop > 9 && break2_min_stop < 10) {
                             break2_stop1.setText(break2_hrs_stop + ":0" + break2_min_stop);
-                        }else if(break2_hrs_stop <10 && break2_min_start < 10) {
-                            break2_stop1.setText("0"+break2_hrs_stop+":0"+break2_min_stop);
-                        }else {
-                            break2_stop1.setText(break2_hrs_stop+":"+break2_min_stop);
+                        } else if (break2_hrs_stop < 10 && break2_min_start < 10) {
+                            break2_stop1.setText("0" + break2_hrs_stop + ":0" + break2_min_stop);
+                        } else {
+                            break2_stop1.setText(break2_hrs_stop + ":" + break2_min_stop);
                         }
                     }
                 }, mHour, mMinute, true);
@@ -316,18 +316,18 @@ public class manualEntry extends AppCompatActivity {
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
 
-                            break3_hrs_start = hourOfDay;
+                        break3_hrs_start = hourOfDay;
 
-                            break3_min_start = minute;
+                        break3_min_start = minute;
 
                         if (break3_hrs_start < 10 && break3_min_start > 9) {
                             break3_start1.setText("0" + break3_hrs_start + ":" + break3_min_start);
-                        } else if(break3_hrs_start >9 && break3_min_start < 10){
+                        } else if (break3_hrs_start > 9 && break3_min_start < 10) {
                             break3_start1.setText(break3_hrs_start + ":0" + break3_min_start);
-                        }else if(break3_hrs_start <10 && break3_min_start < 10) {
-                            break3_start1.setText("0"+break3_hrs_start+":0"+break3_min_start);
-                        }else {
-                            break3_start1.setText(break3_hrs_start+":"+break3_min_start);
+                        } else if (break3_hrs_start < 10 && break3_min_start < 10) {
+                            break3_start1.setText("0" + break3_hrs_start + ":0" + break3_min_start);
+                        } else {
+                            break3_start1.setText(break3_hrs_start + ":" + break3_min_start);
                         }
                     }
                 }, mHour, mMinute, true);
@@ -403,35 +403,41 @@ public class manualEntry extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                long working_mins = 0,break_min = 0;
 
 
-                entry = start1.getText().toString();
-                exit = exit1.getText().toString();
                 break3_stop = break3_stop1.getText().toString();
                 break3_start = break3_start1.getText().toString();
-                break2_stop = break2_stop1.getText().toString();
-                break2_start = break2_start1.getText().toString();
                 break1_start = break1_start1.getText().toString();
                 break1_stop = break1_stop1.getText().toString();
+                break2_stop = break2_stop1.getText().toString();
+                break2_start = break2_start1.getText().toString();
+                entry = start1.getText().toString();
+                exit = exit1.getText().toString();
 
 
+    if((!break2_start.equals("null")&& break2_stop.equals("null")) || (!break1_start.equals("null")&& break1_stop.equals("null")) || (!break3_start.equals("null")&& break3_stop.equals("null"))) {
 
-                    dbHelper.updateManualEntry(id, entry, exit, break1_start, break2_start, break3_start,break1_stop,break2_stop,break3_stop,dates);
-
-
-                    start1.setText("");
-                    exit1.setText("");
-                    break1_start1.setText("");
-                    break1_stop1.setText("");
-                    break2_start1.setText("");
-                    break2_stop1.setText("");
-                    break3_start1.setText("");
-                    break3_stop1.setText("");
-                    Toast.makeText(getApplication(), "UPDATE DONE", Toast.LENGTH_SHORT).show();
+         Toast.makeText(getApplicationContext(),"Exit Time not Provided",Toast.LENGTH_SHORT).show();
+    }else {
+    dbHelper.updateManualEntry(id, entry, exit, break1_start, break2_start, break3_start, break1_stop, break2_stop, break3_stop, dates);
 
 
-                edit.setEnabled(false);
-                edit.setVisibility(View.INVISIBLE);
+    start1.setText("");
+    exit1.setText("");
+    break1_start1.setText("");
+    break1_stop1.setText("");
+    break2_start1.setText("");
+    break2_stop1.setText("");
+    break3_start1.setText("");
+    break3_stop1.setText("");
+    Toast.makeText(getApplication(), "UPDATE DONE", Toast.LENGTH_SHORT).show();
+
+
+    edit.setEnabled(false);
+    edit.setVisibility(View.INVISIBLE);
+
+    }
             }
         });
 

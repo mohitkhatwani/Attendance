@@ -39,12 +39,15 @@ public class userHome extends AppCompatActivity {
     String[] break_start,break_stop;
     int position;
 
+    SharedPreferences sharedpreferences_details;
+    SharedPreferences.Editor editor;
 
     String date="";
     int k=0;
     String Entrytime="",ExitTime="";
     Button entry,breakstart;
     TextView textView,en,ex,bre1,bre2,bre3,textview4;
+    private int flag;
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -57,6 +60,8 @@ public class userHome extends AppCompatActivity {
 
         super.onResume();
         final NiftyDialogBuilder dialogBuilder= NiftyDialogBuilder.getInstance(userHome.this);
+
+
         entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,7 +69,8 @@ public class userHome extends AppCompatActivity {
                 int check = dbHelper.checkDate(id, date);
                 if (check != 1) {               // Already left the company
 
-                    if (entry_exit_toggle == 0) {
+                    entry_exit_toggle = sharedpreferences_details.getInt("entry_exit",10);
+                    if (entry_exit_toggle%2 ==  0 || entry_exit_toggle==10) {
 
 
                         bre1.setText("");
@@ -93,7 +99,9 @@ public class userHome extends AppCompatActivity {
                                         SimpleDateFormat sdfDateTime = new SimpleDateFormat("HH:mm", Locale.US);
                                         Entrytime = sdfDateTime.format(new Date(System.currentTimeMillis()));
 
-                                        en.setText("   Entry Time  :     " + Entrytime);
+                                        editor.putString("entry", Entrytime);
+                                        editor.commit();
+                                        en.setText("   Entry Time  :      " + Entrytime);
                                         entry_exit_toggle++;
                                         breakstart.setEnabled(true);
                                         breakstart.setVisibility(View.VISIBLE);
@@ -111,19 +119,17 @@ public class userHome extends AppCompatActivity {
 
                     }
 
-                    if (entry_exit_toggle == 1) {
+                    if (entry_exit_toggle%2 ==  1) {
 
 
                         Log.e("check value", String.valueOf(entry_exit_toggle));
-//                SharedPreferences.Editor editor = sharedpreferences.edit();
-//                editor.putString("ExitTime", ExitTime);
-//                editor.commit();
 
+                    if(flag==0) {
                         dialogBuilder
-                                .withTitle("Modal Dialog")                                  //.withTitle(null)  no title
+                                .withTitle("Exit")                                  //.withTitle(null)  no title
                                 .withTitleColor("#FFFFFF")                                  //def
                                 .withDividerColor(R.color.accentColor)                              //def
-                                .withMessage("Do you want to Exit")                     //.withMessage(null)  no Msg
+                                .withMessage("Do you want to Exit?")                     //.withMessage(null)  no Msg
                                 .withMessageColor("#FFFFFFFF")                              //def  | withMessageColor(int resid)
                                 .withDialogColor("#7986CB")                               //def  | withDialogColor(int resid)
                                 .withDuration(300)                                          //def
@@ -139,7 +145,11 @@ public class userHome extends AppCompatActivity {
                                         SimpleDateFormat sdfDateTime = new SimpleDateFormat("HH:mm", Locale.US);
                                         ExitTime = sdfDateTime.format(new Date(System.currentTimeMillis()));
 
+                                        editor.putString("exit", ExitTime);
+                                        editor.commit();
                                         ex.setText("   Exit Time    :      " + ExitTime);
+
+
 
 
                                         dbHelper.insertDetails(id, Entrytime, ExitTime, date);
@@ -161,7 +171,13 @@ public class userHome extends AppCompatActivity {
                                         dialogBuilder.dismiss();
                                     }
                                 }).show();
+                    }else {
+                        Toast.makeText(getApplicationContext(),"Cannot Exit while break is going on",Toast.LENGTH_SHORT).show();
                     }
+                    }
+                    entry_exit_toggle++;
+                    editor.putInt("entry_exit",entry_exit_toggle);
+                    editor.commit();
                 } else {
                     dialogBuilder
                             .withTitle("ALERT !")                                  //.withTitle(null)  no title
@@ -197,12 +213,20 @@ public class userHome extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                break_toggle = sharedpreferences_details.getInt("break_toggle",10);
+
                 if(break_toggle % 2 ==0 ) {
 
+//                    editor.putInt("break_toggle",break_toggle);
+//                    editor.commit();
                     breakstart.setText("BREAK STOP");
 
+                    flag = 1;
                     SimpleDateFormat sdfDateTime = new SimpleDateFormat("HH:mm", Locale.US);
                     break_start[position] = sdfDateTime.format(new Date(System.currentTimeMillis()));
+
+                    editor.putString("break_start",break_start[position]);
+                    editor.commit();
 
                     switch (position) {
                         case 0:{
@@ -221,12 +245,12 @@ public class userHome extends AppCompatActivity {
 
                 if(break_toggle % 2 == 1) {
 
-                    breakstart.setText("BREAK START");
 
+                    breakstart.setText("BREAK START");
+                    flag =0;
                     SimpleDateFormat sdfDateTime = new SimpleDateFormat("HH:mm", Locale.US);
                     break_stop[position] = sdfDateTime.format(new Date(System.currentTimeMillis()));
-
-
+                    position = sharedpreferences_details.getInt("break_pos",0);
 
                     switch (position) {
                         case 0: {
@@ -234,39 +258,56 @@ public class userHome extends AppCompatActivity {
 
                             long break_difference = (long) 0;
                             try {
-                                break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+                               // break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+                                break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(sharedpreferences_details.getString("break_start","")).getTime();
                                 break_difference = break_difference / (60 * 1000) % 60;
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-
-                            bre1.setText("   Break 1   :     "+break_difference+ " mins");
+                            editor.putLong("break1", break_difference);
+                            editor.commit();
+                            bre1.setText("   Break 1   :     " + break_difference + " mins");
+                            position++;
+                            editor.putInt("break_pos", position);
+                            editor.commit();
                         }break;
 
                         case 1: {
                             long break_difference = (long) 0;
                             try {
-                                break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+                               // break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+                                break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(sharedpreferences_details.getString("break_start","")).getTime();
                                 break_difference = break_difference / (60 * 1000) % 60;
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            bre2.setText("   Break 2   :     "+break_difference + " mins");
+                            editor.putLong("break2",break_difference);
+                            editor.commit();
+                            bre2.setText("   Break 2   :     " + break_difference + " mins");
+                            position++;
+                            editor.putInt("break_pos", position);
+                            editor.commit();
                         }break;
 
                         case 2: {
                             long break_difference = (long) 0;
                             try {
-                                break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+                               // break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+                                break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(sharedpreferences_details.getString("break_start","")).getTime();
                                 break_difference = break_difference / (60 * 1000) % 60;
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
+                            editor.putLong("break3",break_difference);
+                            editor.commit();
                             bre3.setText("   Break 3   :     "+break_difference+ " mins");
+                            position=0;
+                            editor.putInt("break_pos",position);
+                            editor.commit();
                         }
                     }
 
-                    position++;
+
 
                     if( position == 3) {
                         breakstart.setEnabled(false);
@@ -276,6 +317,8 @@ public class userHome extends AppCompatActivity {
                 }
 
                 break_toggle++;
+                editor.putInt("break_toggle",break_toggle);
+                editor.commit();
 
             }
         });
@@ -289,14 +332,101 @@ public class userHome extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
 
-        Intent intent = getIntent();
-        id = intent.getIntExtra("id",0);
-        SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-       id =  sharedpreferences.getInt("id",0);
-        Log.e("home id", String.valueOf(id));
-        super.onCreate(savedInstanceState);
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_home);
+        sharedpreferences_details = getSharedPreferences("Details", Context.MODE_PRIVATE);
+
+
+        editor = sharedpreferences_details.edit();
+
+        en=(TextView)findViewById(R.id.Entry);
+        ex = (TextView) findViewById(R.id.ExitTime);
+        bre1 = (TextView) findViewById(R.id.Break1);
+        bre2 = (TextView) findViewById(R.id.Break2);
+        bre3 = (TextView) findViewById(R.id.Break3);
+        entry = (Button) findViewById(R.id.entry);
+        breakstart = (Button) findViewById(R.id.breakStart);
+        breakstart.setEnabled(false);
+        breakstart.setVisibility(View.INVISIBLE);
+        entry.setBackgroundColor(getResources().getColor(R.color.green));
+
+        en.setText("");
+        ex.setText("");
+        bre1.setText("");
+        bre2.setText("");
+        bre3.setText("");
+//        editor.remove("entry");
+//        editor.remove("exit");
+//        editor.remove("break1");
+//        editor.remove("break2");
+//        editor.remove("break3");
+//        editor.remove("entry_exit");
+//        editor.remove("break_toggle");
+//        editor.commit();
+
+
+        Intent intent = getIntent();
+        id = intent.getIntExtra("id", 0);
+        SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+
+
+        int check_id = sharedpreferences_details.getInt("id",0);
+        if(check_id != 0) {
+
+
+           // Toast.makeText(getApplicationContext(),"File exists"+String.valueOf(check_id),Toast.LENGTH_SHORT).show();
+            String entry1 = sharedpreferences_details.getString("entry",null);
+            String exit1 = sharedpreferences_details.getString("exit",null);
+            Long break1 = sharedpreferences_details.getLong("break1", 100);
+            Long break2 = sharedpreferences_details.getLong("break2", 100);
+            Long break3 = sharedpreferences_details.getLong("break3", 100);
+            break_toggle = sharedpreferences_details.getInt("break_toggle",10);
+            entry_exit_toggle = sharedpreferences_details.getInt("entry_exit",10);
+
+            if(entry_exit_toggle != 10) {
+                if(entry_exit_toggle == 0) {
+                    entry.setText("EXIT");
+                    entry.setBackgroundColor(getResources().getColor(R.color.red));
+
+                    breakstart.setEnabled(true);
+                    breakstart.setVisibility(View.VISIBLE);
+                    Toast.makeText(getApplicationContext(),"here",Toast.LENGTH_SHORT).show();
+                }else {
+                    entry.setText("ENTRY");
+                    entry.setBackgroundColor(getResources().getColor(R.color.green));
+                }
+            }
+
+            if(break_toggle != 10) {
+                if(break_toggle %2 == 0) {
+                    breakstart.setText("BREAK STOP");
+                }else {
+                    breakstart.setText("BREAK START");
+                }
+            }
+            if(entry1 != null) {
+                en.setText(" Entry Time  :     "+entry1);
+            }
+            if(exit1 != null) {
+                ex.setText(" Exit Time  :      "+exit1);
+            }
+            if(break1 !=100) {
+                bre1.setText("   Break1   :     "+String.valueOf(break1));
+            }
+            if(break2 !=100) {
+                bre2.setText("   Break2   :     "+String.valueOf(break2));
+            }
+            if(break3 !=100) {
+                bre3.setText("   Break3   :     "+String.valueOf(break3));
+            }
+
+        }else {
+
+        }
+        id =  sharedpreferences.getInt("id",0);
+        Log.e("home id", String.valueOf(id));
+
 
         dbHelper = new DbHelper(getApplicationContext());
 
@@ -306,11 +436,11 @@ public class userHome extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        en=(TextView)findViewById(R.id.Entry);
+
         String temp;
         temp=en.getText().toString();
         final SimpleDateFormat sdfDateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        date =  sdfDateTime.format(new Date(System.currentTimeMillis()));
+        date = sdfDateTime.format(new Date(System.currentTimeMillis()));
         Log.e("userHome check date",date);
 
         sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
@@ -318,32 +448,19 @@ public class userHome extends AppCompatActivity {
         editor.putInt("id", id);
         editor.commit();
 
-        if (temp==""){
-            String tempEntry,tempexit;
-            tempEntry=sharedpreferences.getString("Entrytime",Entrytime);
-            en.setText(tempEntry);
-            tempexit=sharedpreferences.getString("ExitTime",ExitTime);
-            en.setText(tempexit);
-        }
 
-        entry = (Button) findViewById(R.id.entry);
-        breakstart = (Button) findViewById(R.id.breakStart);
-        ex = (TextView) findViewById(R.id.ExitTime);
-        bre1 = (TextView) findViewById(R.id.Break1);
-        bre2 = (TextView) findViewById(R.id.Break2);
-        bre3 = (TextView) findViewById(R.id.Break3);
 
         textview4 = (TextView) findViewById(R.id.textView4);
         textview4.setVisibility(View.INVISIBLE);
         entry_exit_toggle=0;
+        editor.putInt("entry_exit", entry_exit_toggle);
+        editor.commit();
 
         //array memory allocation
-        break_start = new String[3];
-        break_stop = new String[3];
+        break_start = new String[100];
+        break_stop = new String[100];
 
-        breakstart.setEnabled(false);
-        breakstart.setVisibility(View.INVISIBLE);
-        entry.setBackgroundColor(getResources().getColor(R.color.green));
+
 
 
 
@@ -414,7 +531,7 @@ public class userHome extends AppCompatActivity {
                         editor.remove("pass");
                         editor.commit();
                         Intent logout = new Intent(getApplicationContext(), MainActivity.class);
-                       // finish();
+                       finish();
                         startActivity(logout);
                         break;
                 }

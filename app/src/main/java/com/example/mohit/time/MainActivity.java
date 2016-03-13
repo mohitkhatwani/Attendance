@@ -100,6 +100,11 @@ String[] usr,pass;
                                     editor2.putInt("id", id);
                                     editor2.commit();
 
+                                    final SharedPreferences sharedpreferences_details = getSharedPreferences("Details", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor3 = sharedpreferences_details.edit();
+                                    editor3.putInt("id", id);
+                                    editor3.commit();
+
                                     Intent home = new Intent(getApplicationContext(), userHome.class);
                                     //home.putExtra("id",id);
                                     finish();
