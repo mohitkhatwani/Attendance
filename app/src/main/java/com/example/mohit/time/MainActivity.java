@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends Activity {
@@ -23,7 +25,7 @@ public class MainActivity extends Activity {
     Button loginbutt;
     DbHelper dbh;
     EditText uname,passswd;
-String[] usr,pass;
+    List<String> usr,pass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +34,10 @@ String[] usr,pass;
 
         uname = (EditText) findViewById(R.id.username);
         passswd = (EditText) findViewById(R.id.password);
-
         loginbutt=(Button)findViewById(R.id.Login);
 
-         usr = new String[10];
-         pass = new String[10];
+         usr = new ArrayList<>();
+         pass = new ArrayList<>();
 
 
         SharedPreferences sharedpreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
@@ -63,56 +64,56 @@ String[] usr,pass;
                         }
 
 
-                        // Toast.makeText(getApplicationContext(),"", Toast.LENGTH_SHORT).show();
-
-
                         usr = dbh.getUserNameFromDB();
                         pass = dbh.getPassWordFromDB();
 
                         String uname1 = uname.getText().toString();
                         String passwd = passswd.getText().toString();
 
-                        final SharedPreferences sharedpreferences1 = getSharedPreferences("Login", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedpreferences1.edit();
-                        editor.putString("uname", uname1);
-                        editor.commit();
-
-                        SharedPreferences.Editor editor1 = sharedpreferences1.edit();
-                        editor1.putString("pass", passwd);
-                        editor1.commit();
-
-                        Log.e("shdvar","done");
-
                         int flag = 0;
 
-                        for (int i = 0; i < usr.length; i++) {
+                        for (int i = 0; i < usr.size() ; i++) {
 
 
                             if (!uname1.equals("") && !passwd.equals("")) {
 
-                                if (usr[i].equals(uname1) && pass[i].equals(passwd)) {
+                                Log.e("username",uname1);
+                                Log.e("password",passwd);
 
-                                    int id = dbh.getId(usr[i], pass[i]);
+                                if (usr.get(i).equals(uname1)) {
+                                    if( pass.get(i).equals(passwd)) {
+
+                                        Log.e("username",uname1);
+                                        Log.e("password",passwd);
+
+                                        int id = dbh.getId(usr.get(i), pass.get(i));
+
+                                        final SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor2 = sharedpreferences.edit();
+                                        editor2.putInt("id", id);
+                                        editor2.commit();
+
+                                        final SharedPreferences sharedpreferences_details = getSharedPreferences("Details", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor3 = sharedpreferences_details.edit();
+                                        editor3.putInt("id", id);
+                                        editor3.commit();
+
+                                        final SharedPreferences sharedpreferences1 = getSharedPreferences("Login", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor editor = sharedpreferences1.edit();
+                                        editor.putString("uname", uname1);
+                                        editor.commit();
+
+                                        SharedPreferences.Editor editor1 = sharedpreferences1.edit();
+                                        editor1.putString("pass", passwd);
+                                        editor1.commit();
+
+                                        Intent home = new Intent(getApplicationContext(), userHome.class); // User Home Class
+                                        finish();
+                                        startActivity(home);
+                                        flag = 1;
 
 
-                                    final SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor2 = sharedpreferences.edit();
-                                    editor2.putInt("id", id);
-                                    editor2.commit();
-
-                                    final SharedPreferences sharedpreferences_details = getSharedPreferences("Details", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor3 = sharedpreferences_details.edit();
-                                    editor3.putInt("id", id);
-                                    editor3.commit();
-
-                                    Intent home = new Intent(getApplicationContext(), userHome.class);
-                                    //home.putExtra("id",id);
-                                    finish();
-                                    startActivity(home);
-                                    flag = 1;
-                                    break;
-
-
+                                    }
                                 } else {
                                     flag = 0;
 
@@ -122,7 +123,7 @@ String[] usr,pass;
 
                         if (flag == 0) {
 
-                            Toast.makeText(getApplicationContext(), "Failure", Toast.LENGTH_SHORT).show();
+
                             uname.setText("");
                             passswd.setText("");
                         }
@@ -133,7 +134,6 @@ String[] usr,pass;
             }
         else {
                 Intent home = new Intent(getApplicationContext(), userHome.class);
-                //home.putExtra("id",id);
                 finish();
                 startActivity(home);
             }

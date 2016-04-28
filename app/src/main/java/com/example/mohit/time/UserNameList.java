@@ -113,16 +113,6 @@ public class UserNameList extends ActionBarActivity {
         }
 
 
-//        @Override
-//        public void onClick(View v) {
-//            int itemPosition = mRecyclerView.getChildAdapterPosition(v);
-//            Log.e("poistion", String.valueOf(itemPosition));
-//            int  id = dbHelper.getIdFromUname(uname.get(itemPosition));
-//            Intent intent = new Intent(getApplicationContext(),DayReport.class);
-//            intent.putExtra("id_for_report",id);
-//            finish();
-//            startActivity(intent);
-//        }
 
 
     }

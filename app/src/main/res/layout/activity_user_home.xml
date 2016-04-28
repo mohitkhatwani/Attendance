@@ -37,29 +37,37 @@
 
 
         <TextView
-            android:layout_marginTop="50dp"
             android:layout_width="match_parent"
-
-            android:layout_height="30dp"
+            android:textSize="30sp"
+            android:textAlignment="center"
+           android:gravity="center"
+            android:layout_height="40dp"
+    android:layout_marginTop="20dp"
+            android:textColor="@color/primaryDark"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/Entry"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true" />
+            android:layout_below="@+id/entry"
+            android:layout_alignParentStart="false" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_below="@id/Entry"
             android:id="@+id/Break1"
-            android:layout_centerVertical="true"
+            android:textColor="@color/primary"
+            android:gravity="center"
+            android:layout_below="@+id/breakStart"
+            android:layout_marginTop="10dp"
             android:layout_alignParentStart="true" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/primary"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/Break2"
+            android:gravity="center"
             android:layout_below="@+id/Break1"
             android:layout_alignParentStart="true" />
 
@@ -67,32 +75,28 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_below="@id/Break2"
             android:id="@+id/Break3"
-            android:layout_centerVertical="true"
+            android:textColor="@color/primary"
+            android:gravity="center"
+            android:layout_below="@+id/Break2"
+            android:layout_marginTop="5dp"
             android:layout_alignParentStart="true" />
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="30dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:id="@+id/ExitTime"
-            android:layout_below="@+id/Break1"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="59dp" />
+            android:layout_below="@+id/Break3"
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/break_text_home"
-            android:textColor="@color/primary"
-            android:id="@+id/textView4"
+            android:layout_alignParentStart="true"
+            android:textColor="@color/primaryDark"
+            android:textAlignment="center"
             android:gravity="center"
-            android:textStyle="bold"
-            android:layout_marginTop="60dp"
-            android:layout_below="@id/entry"
-            android:layout_alignParentStart="true" />
+            android:layout_height="40dp"
+            android:textSize="30sp"
+            android:layout_marginTop="60dp" />
+
+
 
 
 
@@ -103,7 +107,8 @@
                 android:background="@drawable/custom_button"
                 android:text="@string/break_button"
                 android:id="@+id/breakStart"
-                android:layout_above="@+id/Entry"
+                android:layout_marginTop="175dp"
+
                 android:layout_alignParentStart="true" />
 
     </RelativeLayout>

@@ -138,7 +138,6 @@
                 android:id="@+id/b2_stop"
                 android:layout_below="@id/entry_time"
                 android:layout_marginTop="20dp"
-
                 android:focusable="true"
                 android:focusableInTouchMode="true" />
 

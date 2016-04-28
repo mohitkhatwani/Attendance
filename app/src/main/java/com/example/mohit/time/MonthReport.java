@@ -10,6 +10,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,17 +38,15 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class MonthReport extends ActionBarActivity implements AdapterView.OnItemSelectedListener{
+public class MonthReport extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
-    private Calendar mCalendar;
 
-    int mYear,mMonth,mDay,yearSelected,monthSelected;
-    static final int DATE_DIALOG_ID = 1;
+    int yearSelected,monthSelected;String month;
 
     int time_hrs,time_min;
 
     Button b;
-    TextView textView,user_drawer;
+    TextView textView;
 
     DbHelper dbHelper;
 
@@ -61,6 +60,9 @@ public class MonthReport extends ActionBarActivity implements AdapterView.OnItem
     List<String> unames;
 
     int id,desig,id_sel;
+
+    int working_time,break_time,break_time_hrs,break_time_mins;
+    private int eff_working_hrs,eff_working_min;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,7 @@ public class MonthReport extends ActionBarActivity implements AdapterView.OnItem
 
         final SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         id = sharedpreferences.getInt("id", 0);
-//
+
         desig = dbHelper.getDesignation(id);
         Log.e("desig", String.valueOf(desig));
 
@@ -97,6 +99,7 @@ public class MonthReport extends ActionBarActivity implements AdapterView.OnItem
         spinner.setAdapter(aa);
 
         b = (Button) findViewById(R.id.month_button);
+        dp1 = (DatePicker) findViewById(R.id.date_month);
 
         textView = (TextView) findViewById(R.id.tool_time);
         SimpleDateFormat sdfDateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -105,10 +108,6 @@ public class MonthReport extends ActionBarActivity implements AdapterView.OnItem
 
         tb1=(Toolbar)findViewById(R.id.app_bar_month);
         setSupportActionBar(tb1);
-
-
-
-
 
         b.setOnClickListener(new View.OnClickListener() {
     @Override
@@ -121,20 +120,59 @@ public class MonthReport extends ActionBarActivity implements AdapterView.OnItem
         int show=1;
 
         Log.e("month selected", String.valueOf(monthSelected));
-        int working_time = dbHelper.monthReport(id, String.valueOf(monthSelected));
-        int break_time = dbHelper.getMonthBreak(id, String.valueOf(monthSelected));
+        if(monthSelected < 10 ) {
+            month = "0"+String.valueOf(monthSelected);
+        }else if(monthSelected >= 10) {
+            month = String.valueOf(monthSelected);
+        }
 
-        int eff_month_time = working_time - break_time;
 
-        time_hrs = eff_month_time / 60;
-        time_min = eff_month_time % 60;
+        try {
+             working_time = dbHelper.monthReport(id_sel, month);
+            break_time = dbHelper.getMonthBreak(id_sel,month);
+
+        }catch (NumberFormatException e) {
+            show = 0;
+            dialogBuilder
+                    .withTitle("NO DATA FOUND")                                  //.withTitle(null)  no title
+                    .withTitleColor("#FFFFFF")                                  //def
+                    .withDividerColor(R.color.accentColor)                              //def
+                    .withMessage("INCORRECT DATE SELECTED")               //.withMessage(null)  no Msg
+                    .withMessageColor("#FFFFFFFF")                              //def  | withMessageColor(int resid)
+                    .withDialogColor("#7986CB")                               //def  | withDialogColor(int resid
+                    .withDuration(700)                                          //def
+                    .withEffect(null)                                         //def Effectstype.Slidetop
+                    .withButton1Text("OK")                                      //def gone//def gone
+                    .isCancelableOnTouchOutside(false)                           //def    | isCancelable(true)//.setCustomView(View or ResId,context)
+                    .setButton1Click(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            dialogBuilder.dismiss();
+                        }
+                    })
+                    .show();
+        }
+
+        time_hrs = working_time / 60;
+
+        time_min = working_time % 60;
+
+        working_time = working_time - break_time;
+
+        break_time_hrs = break_time /60;
+        break_time_mins = break_time % 60;
+
+        eff_working_hrs = working_time / 60;
+
+        eff_working_min = working_time % 60;
 
         if(show==1) {
             dialogBuilder
                     .withTitle("REPORT")                                  //.withTitle(null)  no title
                     .withTitleColor("#FFFFFF")                                  //def
                     .withDividerColor(R.color.accentColor)                              //def
-                    .withMessage("Effective Working hrs:" + time_hrs + "hrs " + time_min + " min \n")               //.withMessage(null)  no Msg
+                    .withMessage("Working hrs:" + time_hrs + " hrs " + time_min + " min\nBreak " +break_time_hrs+" hours " + break_time_mins + " mins \nEffective Working hrs:" + eff_working_hrs + " hrs " + eff_working_min + " min\n")               //.withMessage(null)  no Msg
                     .withMessageColor("#FFFFFFFF")                              //def  | withMessageColor(int resid)
                     .withDialogColor("#7986CB")                               //def  | withDialogColor(int resid
                     .withDuration(700)                                          //def
@@ -152,10 +190,6 @@ public class MonthReport extends ActionBarActivity implements AdapterView.OnItem
 
     }
 });
-
-
-
-
 
         drawerLayout=(DrawerLayout)findViewById(R.id.drawlay_month);          /*Drawer*/
         nv1=(NavigationView)findViewById(R.id.draw_month);

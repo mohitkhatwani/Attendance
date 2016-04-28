@@ -109,15 +109,15 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
 
-    public String[] getUserNameFromDB(){
+    public List<String> getUserNameFromDB(){
         String query = "select uname From Login";
         Cursor cursor = mDataBase.rawQuery(query, null);
-        String userName[] = new String[10];
-        int i1=0;
+        List<String> userName = new ArrayList<>();
+       int i1=0;
         if(cursor.getCount()>0){
             if(cursor.moveToFirst()){
                 do{
-                    userName[i1] = cursor.getString(0);
+                    userName.add(i1, cursor.getString(0));
 
                     i1++;
 
@@ -142,16 +142,15 @@ public class DbHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public String[] getPassWordFromDB(){
+    public List<String> getPassWordFromDB(){
         String query = "select passwd From Login";
         Cursor cursor1 = mDataBase.rawQuery(query, null);
-        String pass[] = new String[10];
+        List<String> pass = new ArrayList<>();
         int i1=0;
         if(cursor1.getCount()>0){
             if(cursor1.moveToFirst()){
                 do{
-                    pass[i1] = cursor1.getString(0);
-                    //Toast.makeText(mContext,pass[i1],Toast.LENGTH_SHORT).show();
+                    pass.add(i1,cursor1.getString(0));
                     i1++;
 
                 }while (cursor1.moveToNext());
@@ -165,25 +164,8 @@ public class DbHelper extends SQLiteOpenHelper {
     void insertDetails(int id, String entrytime, String exittime, String date) throws android.database.sqlite.SQLiteException{
 
 
-         String query = "INSERT INTO Details(id,entry,exit,date) VALUES("+id+",'"+entrytime+"','"+exittime+"','"+date+"')";
-        // String query = "DELETE FROM Details WHERE 1=1";
-
+        String query = "INSERT INTO Details(id,entry,exit,date) VALUES("+id+",'"+entrytime+"','"+exittime+"','"+date+"')";
             mDataBase.execSQL(query);
-
-        String q = "SELECT id,entry,exit,date FROM Details";
-        Cursor cu = mDataBase.rawQuery(q,null);
-        if (cu.getCount() > 0) {
-
-            if(cu.moveToFirst()) {
-                do {
-                    Log.e("OUTPUT", String.valueOf(cu.getInt(0))) ;
-                    Log.e("OUTPUT",cu.getString(1));
-                    Log.e("OUTPUT",cu.getString(2));
-                    Log.e("OUTPUT",cu.getString(3));
-                }while(cu.moveToNext());
-            }
-        }
-        cu.close();
 
     }
 
@@ -200,8 +182,6 @@ public class DbHelper extends SQLiteOpenHelper {
                     String hour = cursor.getString(0);
                     String min = cursor.getString(1);
 
-//                  Log.e("hour value before",hour);
-
                     if (hour == null) {
                         working_time[0] = "0";
                     } else {
@@ -216,22 +196,7 @@ public class DbHelper extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
 
-            String q = "SELECT id,entry,exit,date FROM Details";
-            Cursor cu = mDataBase.rawQuery(q, null);
-            if (cu.getCount() > 0) {
-
-                if (cu.moveToFirst()) {
-                    do {
-                        Log.e("OUTPUT_MANULA", String.valueOf(cu.getInt(0)));
-                        Log.e("OUTPUT_MANUAL", cu.getString(1));
-                        Log.e("OUTPUT_MANUAL", cu.getString(2));
-                        Log.e("OUTPUT_MANUAL", cu.getString(3));
-                    } while (cu.moveToNext());
-                }
-            }
             cursor.close();
-            cu.close();
-
 
             working_day_time = Integer.parseInt(working_time[0]) * 60;
             working_day_time += Integer.parseInt(working_time[1]);
@@ -316,25 +281,69 @@ public class DbHelper extends SQLiteOpenHelper {
         return break_total;
     }
 
-    int getMonthBreak(int id,String month) {
-        int break_total=0;
-        String query = "SELECT break1,break2,break3 FROM Details WHERE id = "+id+" AND strftime('%m',date)='"+month+"'";
-        Cursor cursor = mDataBase.rawQuery(query,null);
-        if ((cursor.getCount()>0)) {
-            if(cursor.moveToFirst()) {
+    int getMonthBreak(int id,String month)  throws NumberFormatException {
+        int break_total=0, month_break_total =0 ;
+        String break_hours[] = new String[3];
+        String break_mins[] = new String[3];
+
+        String query ="SELECT strftime('%H',break1_stop) - strftime('%H',break1_start) AS b1h,strftime('%M',break1_stop) - strftime('%M',break1_start) AS b1m," +
+                "strftime('%H',break2_stop) - strftime('%H',break2_start) AS b2h,strftime('%M',break2_stop) - strftime('%M',break2_start) AS b2m," +
+                "strftime('%H',break3_stop) - strftime('%H',break3_start) AS b3h,strftime('%M',break3_stop) - strftime('%M',break3_start) AS b3m FROM Breaks WHERE break_id = "+id+" AND strftime('%m',date)='"+month+"'";
+        Cursor curso = mDataBase.rawQuery(query,null);
+        if ((curso.getCount()>0)) {
+            if(curso.moveToFirst()) {
                 do {
-                    int b1 = Integer.parseInt(cursor.getString(0));
-                    int b2 = Integer.parseInt(cursor.getString(1));
-                    int b3 = Integer.parseInt(cursor.getString(2));
+                    String break1_hour = curso.getString(0);
+                    String break1_min = curso.getString(1);
+                    String break2_hour = curso.getString(2);
+                    String break2_min = curso.getString(3);
+                    String break3_hour = curso.getString(4);
+                    String break3_min = curso.getString(5);
 
-                    break_total = b1 + b2 + b3;
+                    if (break1_hour==(null)) {
+                        break_hours[0] = "0";
+                    } else {
+                        break_hours[0] = break1_hour;
+                    }
+                    if (break1_min==(null)) {
+                        break_mins[0] = "0";
+                    } else {
+                        break_mins[0] = break1_min;
+                    }
+                    if (break2_hour==(null)) {
+                        break_hours[1] = "0";
+                    } else {
+                        break_hours[1] = break2_hour;
+                    }
+                    if (break2_min==(null)) {
+                        break_mins[1] = "0";
+                    } else {
+                        break_mins[1] = break2_min;
+                    }
+                    if (break3_hour==(null)) {
+                        break_hours[2] = "0";
+                    } else {
+                        break_hours[2] = break3_hour;
+                    }
+                    if (break3_min==(null)) {
+                        break_mins[2] = "0";
+                    } else {
+                        break_mins[2] = break3_min;
+                    }
 
-                }while(cursor.moveToNext());
+
+                    break_total = Integer.parseInt(break_hours[0])*60 + Integer.parseInt(break_hours[1])*60 + Integer.parseInt(break_hours[2])*60;
+                    break_total += Integer.parseInt(break_mins[0]) + Integer.parseInt(break_mins[1]) + Integer.parseInt(break_mins[2]);
+
+
+                    month_break_total += break_total;
+                }while(curso.moveToNext());
             }
         }
 
-        cursor.close();
-        return break_total;
+        curso.close();
+        Log.e("month_break_total", String.valueOf(month_break_total));
+        return month_break_total;
 
     }
 
@@ -403,8 +412,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public int monthReport(int id, String monthSelected) {
 
+
         int working_month_hour=0,working_month_min=0;
-        int time;
+        int time=0,time_final = 0;
         String query  = "SELECT strftime('%H',exit) - strftime('%H',entry) AS hour,strftime('%M',exit) - strftime('%M',entry) AS min FROM Details WHERE id = "+id+" AND strftime('%m',date)='"+monthSelected+"'";
         Cursor cursor = mDataBase.rawQuery(query,null);
         if ((cursor.getCount()>0)) {
@@ -414,27 +424,38 @@ public class DbHelper extends SQLiteOpenHelper {
                     String min = cursor.getString(1);
 
 
-                    working_month_hour+=Integer.parseInt(hour);
-                    working_month_min+=Integer.parseInt(min);
+                    if (hour == null) {
+                        working_month_hour =0;
+                    } else {
+                        working_month_hour =Integer.parseInt(hour);
+                        Log.e("working_month_hour", String.valueOf(working_month_hour));
+                    }
 
+                    if (min == null) {
+                        working_month_min = 0;
+                    } else {
+                        working_month_min =Integer.parseInt(min);
+                        Log.e("working_month_min", String.valueOf(working_month_min));
+                    }
+
+
+
+                    time = working_month_hour*60;
+                    time = time + working_month_min;
+
+                    time_final += time;
+                    Log.e("time_final", String.valueOf(time));
 
                 } while (cursor.moveToNext());
+                Log.e("time_final", String.valueOf(time_final));
             }
         }
-        int q = working_month_min/60;
-        working_month_hour = working_month_hour + q;
-        working_month_min = working_month_min%60;
-
-//             time[0] = working_month_hour;
-//        time[1] = working_month_min;
 
 
-        time = working_month_hour*60;
-        time = time + working_month_min;
 
         Log.e("Time returned after",String.valueOf(time));
 
-        return time;
+        return time_final;
     }
 
 
@@ -444,29 +465,13 @@ public class DbHelper extends SQLiteOpenHelper {
         String query = "INSERT INTO Breaks(break_id,break1_start,break1_stop,break2_start,break2_stop,break3_start,break3_stop,date) VALUES("+id+",'"+break_start[0]+"','"+break_stop[0]+"','"+break_start[1]+"','"+break_stop[1]+"','"+break_start[2]+"','"+break_stop[2]+"','"+date+"')";
         mDataBase.execSQL(query);
 
-        String query1 = "SELECT break1_start,break1_stop,date FROM Breaks WHERE break_id="+id;
-        Cursor cursor = mDataBase.rawQuery(query1,null);
-
-        if ((cursor.getCount()>0)) {
-            if(cursor.moveToFirst()) {
-                do {
-                    String bstart = cursor.getString(0);
-                    String bstop = cursor.getString(1);
-
-                     Log.e("insert break",bstart);
-                    Log.e("insert break",bstop);
-                    Log.e("insert break",cursor.getString(2));
-                } while (cursor.moveToNext());
-            }
-        }
-        cursor.close();
     }
 
     public void updateManualEntry(int id, String entry, String exit, String break1_start, String break2_start, String break3_start, String break1_stop, String break2_stop, String break3_stop, String date) {
-        String query1 = "UPDATE Details SET entry='"+entry+"',exit='"+exit+"',date='"+date+"',change=1 WHERE id="+id;
+        String query1 = "UPDATE Details SET entry='"+entry+"',exit='"+exit+"',change=1 WHERE id="+id+" AND date = '"+date+"'" ;
         mDataBase.execSQL(query1);
 
-        String query2 = "UPDATE Breaks SET break1_start='"+break1_start+"',break1_stop='"+break1_stop+"',break2_start='"+break2_start+"',break2_stop='"+break2_stop+"',break3_start='"+break3_start+"',break3_stop='"+break3_stop+"' WHERE break_id="+id;
+        String query2 = "UPDATE Breaks SET break1_start='"+break1_start+"',break1_stop='"+break1_stop+"',break2_start='"+break2_start+"',break2_stop='"+break2_stop+"',break3_start='"+break3_start+"',break3_stop='"+break3_stop+"' WHERE break_id="+id+" AND date='"+date+"'";
         mDataBase.execSQL(query2);
 
 
@@ -545,7 +550,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public List<String> getUserNameFromDesig(int desig) {
 
-       // String query = "select uname From Login WHERE desig < "+desig;
+
         String query = "select uname From Login WHERE desig <= "+desig;
         Cursor cursor = mDataBase.rawQuery(query, null);
         List<String> userName = new ArrayList<>();
@@ -561,9 +566,7 @@ public class DbHelper extends SQLiteOpenHelper {
             }
         }
         cursor.close();
-        //String usr1[] = {"mot","mudne"};
         return userName;
-
 
     }
 }

@@ -44,7 +44,7 @@ TextView textView;
 
     String date_selected;
 
-    List<String> unames,get_unames;
+    List<String> unames;
 
     DrawerLayout drawerLayout;          //Drawer
     ActionBarDrawerToggle abdt;
@@ -75,15 +75,14 @@ TextView textView;
             e.printStackTrace();
         }
 
-//         id = getIntent().getExtras().getInt("id_for_report");
+
 
         final SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         id = sharedpreferences.getInt("id", 0);
-//
+
         desig = dbHelper.getDesignation(id);
         Log.e("desig", String.valueOf(desig));
-        //unames = dbHelper.getUserNameFromDesig(desig);
-//
+
         unames = dbHelper.getUserNameFromDesig(desig);
 
 
@@ -111,10 +110,6 @@ TextView textView;
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-
-//                 id_text=id;
 
                 int day = dp1.getDayOfMonth();
                 int month = dp1.getMonth()+1;
@@ -213,9 +208,7 @@ TextView textView;
             }
         });
 
-        //user_drawer = (TextView) findViewById(R.id.user_drawer);
-//        String username = dbHelper.getUserDrawer(id);
-//        user_drawer.setText(username);
+
 
         nv1.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -223,10 +216,8 @@ TextView textView;
                 switch (menuItem.getItemId()) {
 
                     case R.id.home: {
-                        //Intent intent1 = new Intent(getApplicationContext(),userHome.class);
-                       //intent1.putExtra("id",id);
+
                         finish();
-                      //  startActivity(intent1);
                         break;
                     }
                     case R.id.month: {
@@ -271,9 +262,7 @@ TextView textView;
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-       // Intent intent  = new Intent(DayReport.this,userHome.class);
         finish();
-       // startActivity(intent);
     }
 
     @Override

@@ -52,8 +52,6 @@ public class manualEntry extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-//        Intent intent = getIntent();
-//        id = intent.getIntExtra("id",0);
         final SharedPreferences sharedpreferences = getSharedPreferences("myPref", Context.MODE_PRIVATE);
         id = sharedpreferences.getInt("id",0);
         Log.e("manual id", String.valueOf(id));
@@ -111,9 +109,7 @@ public class manualEntry extends AppCompatActivity {
 
                         if(daySelected == mDay) {
                             Toast.makeText(getApplication(),getString(R.string.manual_today),Toast.LENGTH_SHORT).show();
-                            //Intent intent = new Intent(getApplicationContext(),userHome.class);
                             finish();
-                           // startActivity(intent);
 
                         }
 
@@ -142,7 +138,7 @@ public class manualEntry extends AppCompatActivity {
                     }
 
                 }, mYear, mMonth, mDay);
-        dpd.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            dpd.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
                 flag = 0;
@@ -403,9 +399,6 @@ public class manualEntry extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                long working_mins = 0,break_min = 0;
-
-
                 break3_stop = break3_stop1.getText().toString();
                 break3_start = break3_start1.getText().toString();
                 break1_start = break1_start1.getText().toString();
@@ -459,10 +452,8 @@ public class manualEntry extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
 
                     case R.id.home: {
-                       // Intent intent1 = new Intent(getApplicationContext(), userHome.class);
-                        // intent1.putExtra("id",id);
+
                         finish();
-                       // startActivity(intent1);
                         break;
                     }
                     case R.id.month: {
@@ -475,7 +466,6 @@ public class manualEntry extends AppCompatActivity {
                     case R.id.day:
 
                         Intent intent1 = new Intent(getApplicationContext(), DayReport.class);
-                        // intent1.putExtra("id",id);
                         finish();
                         startActivity(intent1);
                         break;
@@ -506,10 +496,7 @@ public class manualEntry extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //Intent intent  = new Intent(manualEntry.this,userHome.class);
-       // startActivity(intent);
-finish();
-
+        finish();
     }
 
 

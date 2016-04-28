@@ -42,11 +42,10 @@ public class userHome extends AppCompatActivity {
     SharedPreferences sharedpreferences_details;
     SharedPreferences.Editor editor;
 
-    String date="";
-    int k=0;
-    String Entrytime="",ExitTime="";
+    String date;
+    String Entrytime,ExitTime;
     Button entry,breakstart;
-    TextView textView,en,ex,bre1,bre2,bre3,textview4;
+    TextView textView,en,ex,bre1,bre2,bre3;
     private int flag;
 
     @Override
@@ -73,12 +72,6 @@ public class userHome extends AppCompatActivity {
                     if (entry_exit_toggle%2 ==  0 || entry_exit_toggle==10) {
 
 
-                        bre1.setText("");
-                        bre2.setText("");
-                        bre3.setText("");
-                        ex.setText("");
-
-
                         dialogBuilder
                                 .withTitle("REPORT")                                  //.withTitle(null)  no title
                                 .withTitleColor("#FFFFFF")                                  //def
@@ -101,11 +94,13 @@ public class userHome extends AppCompatActivity {
 
                                         editor.putString("entry", Entrytime);
                                         editor.commit();
-                                        en.setText("   Entry Time  :      " + Entrytime);
+                                        en.setText("   Entry Time  :   " + Entrytime);
                                         entry_exit_toggle++;
+                                        editor.putInt("entry_exit",entry_exit_toggle);
+                                        editor.commit();
                                         breakstart.setEnabled(true);
                                         breakstart.setVisibility(View.VISIBLE);
-                                        textview4.setVisibility(View.VISIBLE);
+
                                         dialogBuilder.dismiss();
                                     }
                                 })
@@ -141,16 +136,15 @@ public class userHome extends AppCompatActivity {
                                     @Override
                                     public void onClick(View v) {
                                         entry.setVisibility(View.INVISIBLE);
-                                        textview4.setVisibility(View.INVISIBLE);
+                                        //textview4.setVisibility(View.INVISIBLE);
+
                                         SimpleDateFormat sdfDateTime = new SimpleDateFormat("HH:mm", Locale.US);
                                         ExitTime = sdfDateTime.format(new Date(System.currentTimeMillis()));
-
+                                        entry_exit_toggle++;
                                         editor.putString("exit", ExitTime);
+                                        editor.putInt("entry_exit",entry_exit_toggle);
                                         editor.commit();
-                                        ex.setText("   Exit Time    :      " + ExitTime);
-
-
-
+                                        ex.setText("   Exit Time    :    " + ExitTime);
 
                                         dbHelper.insertDetails(id, Entrytime, ExitTime, date);
                                         dbHelper.insertBreakDetails(id, break_start, break_stop, date);
@@ -175,9 +169,8 @@ public class userHome extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(),"Cannot Exit while break is going on",Toast.LENGTH_SHORT).show();
                     }
                     }
-                    entry_exit_toggle++;
-                    editor.putInt("entry_exit",entry_exit_toggle);
-                    editor.commit();
+
+
                 } else {
                     dialogBuilder
                             .withTitle("ALERT !")                                  //.withTitle(null)  no title
@@ -215,28 +208,34 @@ public class userHome extends AppCompatActivity {
 
                 break_toggle = sharedpreferences_details.getInt("break_toggle",10);
 
-                if(break_toggle % 2 ==0 ) {
+                Log.e("break_toggle", String.valueOf(break_toggle));
+                if(break_toggle % 2 ==0) {
 
-//                    editor.putInt("break_toggle",break_toggle);
-//                    editor.commit();
                     breakstart.setText("BREAK STOP");
 
                     flag = 1;
                     SimpleDateFormat sdfDateTime = new SimpleDateFormat("HH:mm", Locale.US);
-                    break_start[position] = sdfDateTime.format(new Date(System.currentTimeMillis()));
+                    position = sharedpreferences_details.getInt("break_pos", 0);
+                    editor.putInt("break_pos",position).commit();
 
+                    Log.e("pos in break_start", String.valueOf(position));
+                    break_start[position] = sdfDateTime.format(new Date(System.currentTimeMillis()));
                     editor.putString("break_start",break_start[position]);
                     editor.commit();
+
 
                     switch (position) {
                         case 0:{
                             bre1.setText("Break 1 is going on");
+
                         }break;
                         case 1: {
                             bre2.setText("Break 2 is going on");
+
                         }break;
                         case 2: {
                             bre3.setText("Break 3 is going on");
+
                         }
                     }
 
@@ -246,19 +245,21 @@ public class userHome extends AppCompatActivity {
                 if(break_toggle % 2 == 1) {
 
 
+                    position = sharedpreferences_details.getInt("break_pos", 0);
                     breakstart.setText("BREAK START");
                     flag =0;
                     SimpleDateFormat sdfDateTime = new SimpleDateFormat("HH:mm", Locale.US);
                     break_stop[position] = sdfDateTime.format(new Date(System.currentTimeMillis()));
-                    position = sharedpreferences_details.getInt("break_pos",0);
 
+
+                    Log.e("pos in break_stop", String.valueOf(position));
                     switch (position) {
                         case 0: {
 
 
                             long break_difference = (long) 0;
                             try {
-                               // break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+
                                 break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(sharedpreferences_details.getString("break_start","")).getTime();
                                 break_difference = break_difference / (60 * 1000) % 60;
                             } catch (ParseException e) {
@@ -269,40 +270,43 @@ public class userHome extends AppCompatActivity {
                             bre1.setText("   Break 1   :     " + break_difference + " mins");
                             position++;
                             editor.putInt("break_pos", position);
+
                             editor.commit();
                         }break;
 
                         case 1: {
                             long break_difference = (long) 0;
                             try {
-                               // break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+
                                 break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(sharedpreferences_details.getString("break_start","")).getTime();
                                 break_difference = break_difference / (60 * 1000) % 60;
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            editor.putLong("break2",break_difference);
+                            editor.putLong("break2", break_difference);
                             editor.commit();
                             bre2.setText("   Break 2   :     " + break_difference + " mins");
                             position++;
                             editor.putInt("break_pos", position);
+
                             editor.commit();
                         }break;
 
                         case 2: {
                             long break_difference = (long) 0;
                             try {
-                               // break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(break_start[position]).getTime();
+
                                 break_difference = sdfDateTime.parse(break_stop[position]).getTime() - sdfDateTime.parse(sharedpreferences_details.getString("break_start","")).getTime();
                                 break_difference = break_difference / (60 * 1000) % 60;
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
-                            editor.putLong("break3",break_difference);
+                            editor.putLong("break3", break_difference);
                             editor.commit();
                             bre3.setText("   Break 3   :     "+break_difference+ " mins");
-                            position=0;
-                            editor.putInt("break_pos",position);
+                            position++;
+                            editor.putInt("break_pos", position);
+
                             editor.commit();
                         }
                     }
@@ -310,8 +314,12 @@ public class userHome extends AppCompatActivity {
 
 
                     if( position == 3) {
+                        breakstart.setText("Breaks");
+                        breakstart.setTextColor(getResources().getColor(R.color.primary));
+                        breakstart.setTextSize(20);
                         breakstart.setEnabled(false);
-                        breakstart.setVisibility(View.INVISIBLE);
+                      //  breakstart.setVisibility(View.INVISIBLE);
+
                     }
 
                 }
@@ -351,19 +359,6 @@ public class userHome extends AppCompatActivity {
         breakstart.setVisibility(View.INVISIBLE);
         entry.setBackgroundColor(getResources().getColor(R.color.green));
 
-        en.setText("");
-        ex.setText("");
-        bre1.setText("");
-        bre2.setText("");
-        bre3.setText("");
-//        editor.remove("entry");
-//        editor.remove("exit");
-//        editor.remove("break1");
-//        editor.remove("break2");
-//        editor.remove("break3");
-//        editor.remove("entry_exit");
-//        editor.remove("break_toggle");
-//        editor.commit();
 
 
         Intent intent = getIntent();
@@ -375,7 +370,7 @@ public class userHome extends AppCompatActivity {
         if(check_id != 0) {
 
 
-           // Toast.makeText(getApplicationContext(),"File exists"+String.valueOf(check_id),Toast.LENGTH_SHORT).show();
+
             String entry1 = sharedpreferences_details.getString("entry",null);
             String exit1 = sharedpreferences_details.getString("exit",null);
             Long break1 = sharedpreferences_details.getLong("break1", 100);
@@ -384,8 +379,9 @@ public class userHome extends AppCompatActivity {
             break_toggle = sharedpreferences_details.getInt("break_toggle",10);
             entry_exit_toggle = sharedpreferences_details.getInt("entry_exit",10);
 
+            Log.e("entry_exit tag", String.valueOf(entry_exit_toggle));
             if(entry_exit_toggle != 10) {
-                if(entry_exit_toggle == 0) {
+                if(entry_exit_toggle%2 == 1) {
                     entry.setText("EXIT");
                     entry.setBackgroundColor(getResources().getColor(R.color.red));
 
@@ -398,8 +394,21 @@ public class userHome extends AppCompatActivity {
                 }
             }
 
+            position = sharedpreferences_details.getInt("break_pos",10);
+            Log.e("position in case", String.valueOf(position));
+
+            if(position==0) {
+                bre1.setText("Break 1 is going on");
+
+            }else if(position==1) {
+                bre2.setText("Break 2 is going on");
+            }else if(position==2){
+                bre3.setText("Break 3 is going on");
+            }
+
+
             if(break_toggle != 10) {
-                if(break_toggle %2 == 0) {
+                if(break_toggle %2 == 1) {
                     breakstart.setText("BREAK STOP");
                 }else {
                     breakstart.setText("BREAK START");
@@ -412,13 +421,13 @@ public class userHome extends AppCompatActivity {
                 ex.setText(" Exit Time  :      "+exit1);
             }
             if(break1 !=100) {
-                bre1.setText("   Break1   :     "+String.valueOf(break1));
+                bre1.setText("   Break1   :     "+String.valueOf(break1)+" mins");
             }
             if(break2 !=100) {
-                bre2.setText("   Break2   :     "+String.valueOf(break2));
+                bre2.setText("   Break2   :     "+String.valueOf(break2)+" mins");
             }
             if(break3 !=100) {
-                bre3.setText("   Break3   :     "+String.valueOf(break3));
+                bre3.setText("   Break3   :     "+String.valueOf(break3)+" mins");
             }
 
         }else {
@@ -436,9 +445,6 @@ public class userHome extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-        String temp;
-        temp=en.getText().toString();
         final SimpleDateFormat sdfDateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         date = sdfDateTime.format(new Date(System.currentTimeMillis()));
         Log.e("userHome check date",date);
@@ -448,13 +454,6 @@ public class userHome extends AppCompatActivity {
         editor.putInt("id", id);
         editor.commit();
 
-
-
-        textview4 = (TextView) findViewById(R.id.textView4);
-        textview4.setVisibility(View.INVISIBLE);
-        entry_exit_toggle=0;
-        editor.putInt("entry_exit", entry_exit_toggle);
-        editor.commit();
 
         //array memory allocation
         break_start = new String[100];
@@ -466,7 +465,7 @@ public class userHome extends AppCompatActivity {
 
 
 
-        break_toggle = 0; position=0;
+
 
 
 
@@ -505,7 +504,7 @@ public class userHome extends AppCompatActivity {
 
                     case R.id.month: {
                         Intent month = new Intent(getApplicationContext(), MonthReport.class);
-                       // finish();
+                        finish();
                         startActivity(month);
                         break;
                     }
@@ -515,12 +514,12 @@ public class userHome extends AppCompatActivity {
 //                        startActivity(intent);
 
                         Intent date = new Intent(getApplicationContext(), DayReport.class);
+                        finish();
                         startActivity(date);
                         break;
                     case R.id.manual:
                         Intent manual = new Intent(getApplicationContext(), manualEntry.class);
-                        //  manual.putExtra("id",id);
-                       // finish();
+                        finish();
                         startActivity(manual);
                         break;
                     case R.id.logout:
@@ -530,6 +529,8 @@ public class userHome extends AppCompatActivity {
                         editor.remove("uname");
                         editor.remove("pass");
                         editor.commit();
+
+                        sharedpreferences_details.edit().clear().commit();
                         Intent logout = new Intent(getApplicationContext(), MainActivity.class);
                        finish();
                         startActivity(logout);
@@ -545,11 +546,11 @@ public class userHome extends AppCompatActivity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        onPause();
-        drawerLayout.closeDrawer(GravityCompat.START);
-    }
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        onPause();
+//        drawerLayout.closeDrawer(GravityCompat.START);
+//    }
 
 }
