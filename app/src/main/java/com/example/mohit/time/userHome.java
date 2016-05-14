@@ -387,7 +387,7 @@ public class userHome extends AppCompatActivity {
 
                     breakstart.setEnabled(true);
                     breakstart.setVisibility(View.VISIBLE);
-                    Toast.makeText(getApplicationContext(),"here",Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getApplicationContext(),"here",Toast.LENGTH_SHORT).show();
                 }else {
                     entry.setText("ENTRY");
                     entry.setBackgroundColor(getResources().getColor(R.color.green));
@@ -445,7 +445,7 @@ public class userHome extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        final SimpleDateFormat sdfDateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        final SimpleDateFormat sdfDateTime = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         date = sdfDateTime.format(new Date(System.currentTimeMillis()));
         Log.e("userHome check date",date);
 
@@ -525,7 +525,6 @@ public class userHome extends AppCompatActivity {
                     case R.id.logout:
                         final SharedPreferences sharedpreferences1 = getSharedPreferences("Login", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedpreferences1.edit();
-
                         editor.remove("uname");
                         editor.remove("pass");
                         editor.commit();

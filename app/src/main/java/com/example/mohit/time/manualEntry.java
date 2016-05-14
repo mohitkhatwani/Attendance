@@ -107,20 +107,22 @@ public class manualEntry extends AppCompatActivity {
                         monthSelected = monthOfYear+1;
                         daySelected = dayOfMonth;
 
-                        if(daySelected == mDay) {
+                        if(daySelected >= mDay) {
                             Toast.makeText(getApplication(),getString(R.string.manual_today),Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(),userHome.class);
                             finish();
+                            startActivity(intent);
 
                         }
 
                         if(daySelected < 10 && monthSelected > 9) {
-                            dates = yearSelected + "-"+monthSelected+"-0"+daySelected;
+                            dates =  "0"+daySelected+ "-"+monthSelected+"-"+yearSelected;
                         } else if(daySelected > 9 && monthSelected <10 ) {
-                            dates = yearSelected+"-0"+monthSelected+"-"+daySelected;
+                            dates = daySelected+"-0"+monthSelected+"-"+yearSelected;
                         } else if(daySelected<10 && monthSelected<10){
-                            dates = yearSelected+"-0"+monthSelected+"-0"+daySelected;
+                            dates = "0"+daySelected+"-0"+monthSelected+"-"+yearSelected;
                         }else {
-                            dates = yearSelected + "-"+monthSelected+"-"+daySelected;
+                            dates = daySelected + "-"+monthSelected+"-"+yearSelected;
                         }
 
                         date.setText(dates);
@@ -409,29 +411,36 @@ public class manualEntry extends AppCompatActivity {
                 exit = exit1.getText().toString();
 
 
-    if((!break2_start.equals("null")&& break2_stop.equals("null")) || (!break1_start.equals("null")&& break1_stop.equals("null")) || (!break3_start.equals("null")&& break3_stop.equals("null"))) {
-
-         Toast.makeText(getApplicationContext(),"Exit Time not Provided",Toast.LENGTH_SHORT).show();
-    }else {
-    dbHelper.updateManualEntry(id, entry, exit, break1_start, break2_start, break3_start, break1_stop, break2_stop, break3_stop, dates);
-
-
-    start1.setText("");
-    exit1.setText("");
-    break1_start1.setText("");
-    break1_stop1.setText("");
-    break2_start1.setText("");
-    break2_stop1.setText("");
-    break3_start1.setText("");
-    break3_stop1.setText("");
-    Toast.makeText(getApplication(), "UPDATE DONE", Toast.LENGTH_SHORT).show();
-
-
-    edit.setEnabled(false);
-    edit.setVisibility(View.INVISIBLE);
-
+    if(entry.equals("")) {
+        Toast.makeText(getApplicationContext(),"Entry Time not provided",Toast.LENGTH_SHORT).show();
     }
-            }
+    else if((!break2_start.equals("")&& break2_stop.equals("")) || (!break1_start.equals("")&& break1_stop.equals("")) || (!break3_start.equals("")&& break3_stop.equals(""))) {
+
+         Toast.makeText(getApplicationContext(),"Exit Time for break not Provided",Toast.LENGTH_SHORT).show();
+    }else if(exit.equals("")) {
+
+        Toast.makeText(getApplicationContext(),"Exit Time not Provided",Toast.LENGTH_SHORT).show();
+    }else {
+            dbHelper.updateManualEntry(id, entry, exit, break1_start, break2_start, break3_start, break1_stop, break2_stop, break3_stop, dates);
+
+
+            start1.setText("");
+            exit1.setText("");
+            break1_start1.setText("");
+            break1_stop1.setText("");
+            break2_start1.setText("");
+            break2_stop1.setText("");
+            break3_start1.setText("");
+            break3_stop1.setText("");
+            Toast.makeText(getApplication(), "UPDATE DONE", Toast.LENGTH_SHORT).show();
+
+
+            edit.setEnabled(false);
+            edit.setVisibility(View.INVISIBLE);
+
+        }
+    }
+
         });
 
 
@@ -452,8 +461,9 @@ public class manualEntry extends AppCompatActivity {
                 switch (menuItem.getItemId()) {
 
                     case R.id.home: {
-
+                        Intent home = new Intent(getApplicationContext(), userHome.class);
                         finish();
+                        startActivity(home);
                         break;
                     }
                     case R.id.month: {

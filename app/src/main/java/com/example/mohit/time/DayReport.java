@@ -98,7 +98,7 @@ TextView textView;
         b1=(Button)findViewById(R.id.button);
         textView = (TextView) findViewById(R.id.tool_time);
 
-        SimpleDateFormat sdfDateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat sdfDateTime = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         final String newtime =  sdfDateTime.format(new Date(System.currentTimeMillis()));
         textView.setText(newtime);
 
@@ -116,13 +116,13 @@ TextView textView;
                 int year = dp1.getYear();
 
                 if(day < 10 && month > 9) {
-                    date_selected = year + "-"+month+"-0"+day;
+                    date_selected = day + "-"+month+"-0"+year;
                 } else if(day > 9 && month <10 ) {
-                    date_selected = year+"-0"+month+"-"+day;
+                    date_selected = day+"-0"+month+"-"+year;
                 } else if(day<10 && month<10){
-                    date_selected = year+"-0"+month+"-0"+day;
+                    date_selected = day+"-0"+month+"-0"+year;
                 }else {
-                    date_selected = year + "-"+month+"-"+day;
+                    date_selected = day + "-"+month+"-"+year;
                 }
                 int show=1;
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Time</string>
+    <string name="app_name">Register Management</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -32,6 +32,6 @@
     <string name="break_button">BREAK START</string>
     <string name="day_report_id">Enter ID</string>
     <string name="day_report_button">Go!</string>
-    <string name="manual_today">Cannot Update Today\'s Details</string>
+    <string name="manual_today">Incorrect Date Selected</string>
     <string name="title_activity_user_name_list">UserNameList</string>
 </resources>

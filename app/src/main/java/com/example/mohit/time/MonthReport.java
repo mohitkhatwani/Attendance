@@ -102,7 +102,7 @@ public class MonthReport extends AppCompatActivity implements AdapterView.OnItem
         dp1 = (DatePicker) findViewById(R.id.date_month);
 
         textView = (TextView) findViewById(R.id.tool_time);
-        SimpleDateFormat sdfDateTime = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat sdfDateTime = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
         String newtime =  sdfDateTime.format(new Date(System.currentTimeMillis()));
         textView.setText(newtime);
 
